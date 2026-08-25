@@ -17,7 +17,7 @@ Pin every module to a release tag:
 
 ```hcl
 module "vcn" {
-  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//vcn?ref=v0.2.0"
+  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//vcn?ref=v0.3.0"
 }
 ```
 

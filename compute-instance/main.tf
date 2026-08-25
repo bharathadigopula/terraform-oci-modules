@@ -45,3 +45,42 @@ resource "oci_core_instance" "this" {
     role = each.value.role
   })
 }
+
+#==============================================================================
+# RESERVED PUBLIC ADDRESSES
+#==============================================================================
+
+data "oci_core_vnic_attachments" "primary" {
+  for_each = {
+    for name, instance in var.instances : name => instance
+    if instance.assign_public_ip
+  }
+
+  compartment_id = var.compartment_id
+  instance_id    = oci_core_instance.this[each.key].id
+}
+
+resource "oci_core_private_ip" "reserved_public" {
+  for_each = data.oci_core_vnic_attachments.primary
+
+  display_name = "${var.instances[each.key].display_name}-reserved"
+  vnic_id = one([
+    for attachment in each.value.vnic_attachments : attachment.vnic_id
+    if attachment.nic_index == 0
+  ])
+  freeform_tags = var.freeform_tags
+}
+
+resource "oci_core_public_ip" "reserved" {
+  for_each = oci_core_private_ip.reserved_public
+
+  compartment_id = var.compartment_id
+  display_name   = "${var.instances[each.key].display_name}-reserved"
+  lifetime       = "RESERVED"
+  private_ip_id  = each.value.id
+  freeform_tags  = var.freeform_tags
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}

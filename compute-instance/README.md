@@ -1,12 +1,12 @@
 # OCI Compute Instance Module
 
-Creates OCI Always Free Ampere A1 Flex and E2 Micro instances. Every instance supplies an exact regional image OCID so rebuilds cannot silently switch operating-system images.
+Creates OCI Always Free Ampere A1 Flex and E2 Micro instances. Every instance supplies an exact regional image OCID so rebuilds cannot silently switch operating-system images. Public instances also receive a secondary private IP and a Terraform-protected reserved public IP without replacing the primary VNIC.
 
 ## Example
 
 ```hcl
 module "compute_instance" {
-  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//compute-instance?ref=v0.5.0"
+  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//compute-instance?ref=v0.6.0"
 
   compartment_id      = var.compartment_id
   availability_domain = var.availability_domain
@@ -43,7 +43,7 @@ module "compute_instance" {
 | `ocpus` | A1 only | A1 OCPU allocation; omit for E2 Micro |
 | `memory_in_gbs` | A1 only | A1 memory allocation; omit for E2 Micro |
 | `boot_volume_gbs` | Yes | Boot volume size, minimum 50 GB |
-| `assign_public_ip` | Yes | Assign an ephemeral public IPv4 address |
+| `assign_public_ip` | Yes | Assign an ephemeral address and an additional reserved public address |
 | `public_web` | Yes | Attach the public web NSG |
 | `role` | Yes | Value applied to instance metadata and tags |
 
@@ -58,3 +58,5 @@ module "compute_instance" {
 | Total boot storage | 200 GB |
 
 Use ARM64-compatible operating system packages and container images.
+
+The `instances` output exposes both the launch-time `public_ip` and the stable `reserved_public_ip`. Publish application DNS records only against the reserved address.

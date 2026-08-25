@@ -6,7 +6,7 @@ Creates one or two Ubuntu ARM instances with the Ampere A1 Flex shape. Input che
 
 ```hcl
 module "compute_instance" {
-  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//compute-instance?ref=v0.1.0"
+  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//compute-instance?ref=v0.2.0"
 
   compartment_id      = var.compartment_id
   availability_domain = var.availability_domain

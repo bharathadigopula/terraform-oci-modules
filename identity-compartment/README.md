@@ -6,7 +6,7 @@ Creates an OCI compartment for an isolated workload or environment.
 
 ```hcl
 module "identity_compartment" {
-  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//identity-compartment?ref=v0.1.0"
+  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//identity-compartment?ref=v0.2.0"
 
   parent_compartment_id = var.tenancy_ocid
   name                  = "portfolio-prd"

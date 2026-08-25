@@ -6,7 +6,7 @@ Creates a regional VCN, public subnet, internet route, and network security grou
 
 ```hcl
 module "vcn" {
-  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//vcn?ref=v0.1.0"
+  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//vcn?ref=v0.2.0"
 
   compartment_id   = var.compartment_id
   resource_prefix  = "portfolio-prd-bom"

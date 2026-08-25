@@ -1,0 +1,34 @@
+#==============================================================================
+# DEPENDENCY UPDATES
+#==============================================================================
+
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Etc/UTC
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: terraform
+    directories:
+      - /compute-instance
+      - /identity-compartment
+      - /object-storage-bucket
+      - /vcn
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Etc/UTC
+    groups:
+      terraform-providers:
+        patterns:
+          - "*"

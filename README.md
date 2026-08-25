@@ -17,9 +17,13 @@ Pin every module to a release tag:
 
 ```hcl
 module "vcn" {
-  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//vcn?ref=v0.1.0"
+  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//vcn?ref=v0.2.0"
 }
 ```
+
+## Shared Validation 🔍
+
+The reusable workflow at `.github/workflows/reusable-terraform-validate.yml` provides a credential-free dry run for Terraform modules and roots. It checks formatting, initialises with the backend disabled, and validates the configuration. It never runs `terraform plan` or `terraform apply`.
 
 ## Local Checks ✅
 

@@ -4,12 +4,20 @@
 
 name: Terraform validation
 
+#==============================================================================
+# WORKFLOW TRIGGERS
+#==============================================================================
+
 on:
   pull_request:
   push:
     branches:
       - main
   workflow_dispatch:
+
+#==============================================================================
+# WORKFLOW PERMISSIONS AND CONCURRENCY
+#==============================================================================
 
 permissions:
   contents: read
@@ -18,12 +26,13 @@ concurrency:
   group: terraform-validation-${{ github.ref }}
   cancel-in-progress: true
 
+#==============================================================================
+# MODULE VALIDATION MATRIX
+#==============================================================================
+
 jobs:
   validate:
     name: Validate ${{ matrix.module }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
     strategy:
       fail-fast: false
       matrix:
@@ -32,21 +41,8 @@ jobs:
           - identity-compartment
           - object-storage-bucket
           - vcn
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
-        with:
-          terraform_version: 1.10.5
-
-      - name: Check formatting
-        run: terraform -chdir=${{ matrix.module }} fmt -check -diff
-
-      - name: Initialise module
-        run: terraform -chdir=${{ matrix.module }} init -backend=false -input=false
-
-      - name: Validate module
-        run: terraform -chdir=${{ matrix.module }} validate -no-color
+    uses: ./.github/workflows/reusable-terraform-validate.yml
+    with:
+      working_directory: ${{ matrix.module }}
+    permissions:
+      contents: read

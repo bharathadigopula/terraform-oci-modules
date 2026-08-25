@@ -23,7 +23,7 @@ module "vcn" {
 
 ## Shared Validation 🔍
 
-The reusable workflow at `.github/workflows/reusable-terraform-validate.yml` provides a credential-free dry run for Terraform modules and roots. It checks formatting, initialises with the backend disabled, and validates the configuration. It never runs `terraform plan` or `terraform apply`.
+Pull requests and pushes call the shared validation workflow from `github-pipeline-templates` release `v0.1.0`. It checks formatting, initialises with the backend disabled, and validates each module without OCI credentials. It never runs `terraform plan` or `terraform apply`.
 
 ## Local Checks ✅
 

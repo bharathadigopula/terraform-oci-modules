@@ -41,7 +41,7 @@ jobs:
           - identity-compartment
           - object-storage-bucket
           - vcn
-    uses: ./.github/workflows/reusable-terraform-validate.yml
+    uses: bharathadigopula/github-pipeline-templates/.github/workflows/terraform-validate.yml@v0.1.0
     with:
       working_directory: ${{ matrix.module }}
     permissions:

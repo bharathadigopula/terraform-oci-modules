@@ -52,25 +52,15 @@ variable "ssh_public_key" {
   }
 }
 
-variable "operating_system" {
-  description = "Operating system used to find the latest compatible image."
-  type        = string
-  default     = "Canonical Ubuntu"
-}
-
-variable "operating_system_version" {
-  description = "Operating system version used to find the latest compatible image."
-  type        = string
-  default     = "24.04"
-}
-
 variable "instances" {
-  description = "Map of Ampere A1 compute instances to create."
+  description = "Map of Always Free compute instances to create."
   type = map(object({
     display_name     = string
     hostname_label   = string
-    ocpus            = number
-    memory_in_gbs    = number
+    shape            = string
+    image_id         = string
+    ocpus            = optional(number)
+    memory_in_gbs    = optional(number)
     boot_volume_gbs  = number
     assign_public_ip = bool
     public_web       = bool
@@ -78,17 +68,67 @@ variable "instances" {
   }))
 
   validation {
-    condition     = length(var.instances) <= 2
+    condition     = length(var.instances) <= 4
+    error_message = "Always Free supports at most four instances across Ampere A1 and E2 Micro shapes."
+  }
+
+  validation {
+    condition = alltrue([
+      for instance in values(var.instances) :
+      contains(["VM.Standard.A1.Flex", "VM.Standard.E2.1.Micro"], instance.shape)
+    ])
+    error_message = "Each instance must use VM.Standard.A1.Flex or VM.Standard.E2.1.Micro."
+  }
+
+  validation {
+    condition = alltrue([
+      for instance in values(var.instances) :
+      can(regex("^ocid1\\.image\\.oc1\\.[a-z0-9.-]+$", instance.image_id))
+    ])
+    error_message = "Each image_id must be a valid OCI image OCID."
+  }
+
+  validation {
+    condition = length([
+      for instance in values(var.instances) : instance
+      if instance.shape == "VM.Standard.A1.Flex"
+    ]) <= 2
     error_message = "Always Free supports at most two Ampere A1 instances."
   }
 
   validation {
-    condition     = sum([for instance in values(var.instances) : instance.ocpus]) <= 2
+    condition = length([
+      for instance in values(var.instances) : instance
+      if instance.shape == "VM.Standard.E2.1.Micro"
+    ]) <= 2
+    error_message = "Always Free supports at most two E2 Micro instances."
+  }
+
+  validation {
+    condition = alltrue([
+      for instance in values(var.instances) :
+      instance.shape == "VM.Standard.A1.Flex" ? (
+        instance.ocpus != null && instance.memory_in_gbs != null
+        ) : (
+        instance.ocpus == null && instance.memory_in_gbs == null
+      )
+    ])
+    error_message = "Ampere A1 instances require ocpus and memory_in_gbs; E2 Micro instances must omit them."
+  }
+
+  validation {
+    condition = sum([
+      for instance in values(var.instances) : instance.ocpus
+      if instance.shape == "VM.Standard.A1.Flex"
+    ]) <= 2
     error_message = "Combined Ampere A1 OCPUs cannot exceed the Always Free limit of 2."
   }
 
   validation {
-    condition     = sum([for instance in values(var.instances) : instance.memory_in_gbs]) <= 12
+    condition = sum([
+      for instance in values(var.instances) : instance.memory_in_gbs
+      if instance.shape == "VM.Standard.A1.Flex"
+    ]) <= 12
     error_message = "Combined Ampere A1 memory cannot exceed the Always Free limit of 12 GB."
   }
 

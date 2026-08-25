@@ -1,17 +1,4 @@
 #==============================================================================
-# ARM IMAGE DISCOVERY
-#==============================================================================
-
-data "oci_core_images" "arm" {
-  compartment_id           = var.compartment_id
-  operating_system         = var.operating_system
-  operating_system_version = var.operating_system_version
-  shape                    = "VM.Standard.A1.Flex"
-  sort_by                  = "TIMECREATED"
-  sort_order               = "DESC"
-}
-
-#==============================================================================
 # AMPERE A1 COMPUTE INSTANCES
 #==============================================================================
 
@@ -22,11 +9,15 @@ resource "oci_core_instance" "this" {
   compartment_id       = var.compartment_id
   display_name         = each.value.display_name
   preserve_boot_volume = false
-  shape                = "VM.Standard.A1.Flex"
+  shape                = each.value.shape
 
-  shape_config {
-    memory_in_gbs = each.value.memory_in_gbs
-    ocpus         = each.value.ocpus
+  dynamic "shape_config" {
+    for_each = each.value.shape == "VM.Standard.A1.Flex" ? [each.value] : []
+
+    content {
+      memory_in_gbs = shape_config.value.memory_in_gbs
+      ocpus         = shape_config.value.ocpus
+    }
   }
 
   create_vnic_details {
@@ -46,7 +37,7 @@ resource "oci_core_instance" "this" {
 
   source_details {
     boot_volume_size_in_gbs = each.value.boot_volume_gbs
-    source_id               = data.oci_core_images.arm.images[0].id
+    source_id               = each.value.image_id
     source_type             = "image"
   }
 

@@ -6,6 +6,7 @@ Small Terraform modules for Oracle Cloud Infrastructure. Each folder is named af
 
 | Folder | OCI resources |
 |---|---|
+| `budget-alert` | Monthly compartment budget with actual and forecast email alerts |
 | `identity-compartment` | Identity compartment |
 | `vcn` | VCN, subnet, internet gateway, route table, and network security groups |
 | `compute-instance` | Ampere A1 Flex compute instances and boot volumes |

@@ -7,6 +7,16 @@ variable "compartment_id" {
   type        = string
 }
 
+variable "namespace" {
+  description = "Object Storage namespace of the tenancy that owns the buckets."
+  type        = string
+
+  validation {
+    condition     = length(trimspace(var.namespace)) > 0
+    error_message = "namespace must not be empty."
+  }
+}
+
 variable "buckets" {
   description = "Map of private Object Storage buckets to create."
   type = map(object({

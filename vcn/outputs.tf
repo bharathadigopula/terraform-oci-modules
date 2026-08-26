@@ -12,6 +12,11 @@ output "subnet_id" {
   value       = oci_core_subnet.servers.id
 }
 
+output "bastion_subnet_id" {
+  description = "OCID of the private Bastion subnet."
+  value       = oci_core_subnet.bastion.id
+}
+
 output "server_nsg_id" {
   description = "OCID of the network security group shared by all servers."
   value       = oci_core_network_security_group.servers.id

@@ -41,6 +41,17 @@ variable "public_web_nsg_id" {
 # INSTANCE CONFIGURATION
 #==============================================================================
 
+variable "enabled_agent_plugins" {
+  description = "Oracle Cloud Agent plugins explicitly enabled on every compute instance."
+  type        = set(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for plugin_name in var.enabled_agent_plugins : length(trimspace(plugin_name)) > 0])
+    error_message = "enabled_agent_plugins cannot contain empty plugin names."
+  }
+}
+
 variable "ssh_public_key" {
   description = "OpenSSH public key installed on every compute instance."
   type        = string

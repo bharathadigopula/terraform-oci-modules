@@ -103,7 +103,7 @@ resource "cloudflare_zero_trust_access_application" "this" {
   allowed_idps               = [cloudflare_zero_trust_access_identity_provider.one_time_pin.id]
   auto_redirect_to_identity  = true
   http_only_cookie_attribute = true
-  same_site_cookie_attribute = "strict"
+  same_site_cookie_attribute = "lax"
   session_duration           = var.access_session_duration
 
   policies = [

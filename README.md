@@ -1,12 +1,13 @@
-# OCI Terraform Modules
+# Terraform Infrastructure Modules
 
-Small Terraform modules for Oracle Cloud Infrastructure. Each folder is named after the OCI resource it manages.
+Small Terraform modules for Oracle Cloud Infrastructure and Cloudflare Zero Trust. Each folder is named after the resource group it manages.
 
 ## Available Modules
 
-| Folder | OCI resources |
+| Folder | Managed resources |
 |---|---|
 | `budget-alert` | Monthly compartment budget with actual and forecast email alerts |
+| `cloudflare-access-tunnel` | Cloudflare Tunnel, proxied DNS, email one-time PIN identity provider, Access policy, and self-hosted applications |
 | `compute-instance` | Ampere A1 Flex and E2 Micro compute instances with pinned images and boot-volume limits |
 | `core-network-security-group` | Network security group |
 | `core-network-security-group-security-rule` | Network security group security rule |
@@ -29,7 +30,7 @@ Pin every module to a release tag:
 
 ```hcl
 module "vcn" {
-  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//vcn?ref=v0.5.0"
+  source = "git::https://github.com/bharathadigopula/terraform-oci-modules.git//vcn?ref=v0.10.1"
 }
 ```
 
@@ -37,7 +38,7 @@ Each new resource-specific folder owns one Terraform resource. The legacy `vcn` 
 
 ## Shared Validation
 
-Pull requests and pushes call the shared validation workflow from `github-pipeline-templates` release `v0.1.0`. It checks formatting, initialises with the backend disabled, and validates each module without OCI credentials. It never runs `terraform plan` or `terraform apply`.
+Pull requests and pushes call the shared validation workflow from `github-pipeline-templates` release `v0.1.0`. It checks formatting, initialises with the backend disabled, and validates every module without cloud credentials. It never runs `terraform plan` or `terraform apply`.
 
 ## Local Checks
 

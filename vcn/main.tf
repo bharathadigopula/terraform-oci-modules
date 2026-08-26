@@ -24,6 +24,24 @@ resource "oci_core_internet_gateway" "this" {
   freeform_tags = var.freeform_tags
 }
 
+resource "oci_core_route_table" "public" {
+  compartment_id = var.compartment_id
+  display_name   = "${var.resource_prefix}-public-rt"
+  vcn_id         = oci_core_vcn.this.id
+
+  route_rules {
+    destination       = "0.0.0.0/0"
+    destination_type  = "CIDR_BLOCK"
+    network_entity_id = oci_core_internet_gateway.this.id
+  }
+
+  freeform_tags = var.freeform_tags
+}
+
+#==============================================================================
+# OCI SERVICES ROUTING
+#==============================================================================
+
 data "oci_core_services" "all" {
   filter {
     name   = "name"
@@ -44,22 +62,46 @@ resource "oci_core_service_gateway" "this" {
   freeform_tags = var.freeform_tags
 }
 
-resource "oci_core_route_table" "public" {
+resource "oci_core_route_table" "bastion" {
   compartment_id = var.compartment_id
-  display_name   = "${var.resource_prefix}-public-rt"
+  display_name   = "${var.resource_prefix}-bastion-rt"
   vcn_id         = oci_core_vcn.this.id
-
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_internet_gateway.this.id
-  }
 
   route_rules {
     destination       = data.oci_core_services.all.services[0].cidr_block
     destination_type  = "SERVICE_CIDR_BLOCK"
     network_entity_id = oci_core_service_gateway.this.id
   }
+
+  freeform_tags = var.freeform_tags
+}
+
+#==============================================================================
+# BASTION SUBNET
+#==============================================================================
+
+resource "oci_core_security_list" "bastion" {
+  compartment_id = var.compartment_id
+  display_name   = "${var.resource_prefix}-bastion-sl"
+  vcn_id         = oci_core_vcn.this.id
+
+  egress_security_rules {
+    destination = "0.0.0.0/0"
+    protocol    = "all"
+  }
+
+  freeform_tags = var.freeform_tags
+}
+
+resource "oci_core_subnet" "bastion" {
+  cidr_block                 = var.bastion_subnet_cidr
+  compartment_id             = var.compartment_id
+  display_name               = "${var.resource_prefix}-bastion-subnet"
+  dns_label                  = "bastion"
+  prohibit_public_ip_on_vnic = true
+  route_table_id             = oci_core_route_table.bastion.id
+  security_list_ids          = [oci_core_security_list.bastion.id]
+  vcn_id                     = oci_core_vcn.this.id
 
   freeform_tags = var.freeform_tags
 }

@@ -57,6 +57,16 @@ variable "subnet_cidr" {
   }
 }
 
+variable "bastion_subnet_cidr" {
+  description = "CIDR allocated to the private Bastion subnet."
+  type        = string
+
+  validation {
+    condition     = can(cidrhost(var.bastion_subnet_cidr, 0))
+    error_message = "bastion_subnet_cidr must be a valid CIDR."
+  }
+}
+
 variable "ssh_allowed_cidr" {
   description = "Trusted public IPv4 CIDR allowed to connect over SSH."
   type        = string

@@ -24,6 +24,26 @@ resource "oci_core_internet_gateway" "this" {
   freeform_tags = var.freeform_tags
 }
 
+data "oci_core_services" "all" {
+  filter {
+    name   = "name"
+    values = ["All .* Services In Oracle Services Network"]
+    regex  = true
+  }
+}
+
+resource "oci_core_service_gateway" "this" {
+  compartment_id = var.compartment_id
+  display_name   = "${var.resource_prefix}-service-gateway"
+  vcn_id         = oci_core_vcn.this.id
+
+  services {
+    service_id = data.oci_core_services.all.services[0].id
+  }
+
+  freeform_tags = var.freeform_tags
+}
+
 resource "oci_core_route_table" "public" {
   compartment_id = var.compartment_id
   display_name   = "${var.resource_prefix}-public-rt"
@@ -33,6 +53,12 @@ resource "oci_core_route_table" "public" {
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
     network_entity_id = oci_core_internet_gateway.this.id
+  }
+
+  route_rules {
+    destination       = data.oci_core_services.all.services[0].cidr_block
+    destination_type  = "SERVICE_CIDR_BLOCK"
+    network_entity_id = oci_core_service_gateway.this.id
   }
 
   freeform_tags = var.freeform_tags

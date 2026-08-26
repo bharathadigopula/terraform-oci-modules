@@ -192,7 +192,7 @@ resource "oci_core_network_security_group" "public_web" {
 }
 
 resource "oci_core_network_security_group_security_rule" "public_web" {
-  for_each = toset(["80", "443"])
+  for_each = var.public_web_ingress_enabled ? toset(["80", "443"]) : toset([])
 
   network_security_group_id = oci_core_network_security_group.public_web.id
   direction                 = "INGRESS"

@@ -76,3 +76,9 @@ variable "ssh_allowed_cidr" {
     error_message = "ssh_allowed_cidr must be a valid restricted CIDR and cannot be 0.0.0.0/0."
   }
 }
+
+variable "public_web_ingress_enabled" {
+  description = "Whether the public web NSG accepts HTTP and HTTPS directly from the internet."
+  type        = bool
+  default     = true
+}

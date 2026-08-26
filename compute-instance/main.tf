@@ -11,6 +11,25 @@ resource "oci_core_instance" "this" {
   preserve_boot_volume = false
   shape                = each.value.shape
 
+  dynamic "agent_config" {
+    for_each = length(var.enabled_agent_plugins) > 0 ? [var.enabled_agent_plugins] : []
+
+    content {
+      are_all_plugins_disabled = false
+      is_management_disabled   = false
+      is_monitoring_disabled   = false
+
+      dynamic "plugins_config" {
+        for_each = agent_config.value
+
+        content {
+          desired_state = "ENABLED"
+          name          = plugins_config.value
+        }
+      }
+    }
+  }
+
   dynamic "shape_config" {
     for_each = each.value.shape == "VM.Standard.A1.Flex" ? [each.value] : []
 

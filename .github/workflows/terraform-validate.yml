@@ -37,6 +37,7 @@ jobs:
       fail-fast: false
       matrix:
         module:
+          - bastion
           - budget-alert
           - compute-instance
           - core-network-security-group

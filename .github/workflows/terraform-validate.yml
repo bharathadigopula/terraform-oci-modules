@@ -39,6 +39,7 @@ jobs:
         module:
           - bastion
           - budget-alert
+          - cloudflare-access-tunnel
           - compute-instance
           - core-network-security-group
           - core-network-security-group-security-rule

@@ -38,9 +38,9 @@ Each new resource-specific folder owns one Terraform resource. The legacy `vcn` 
 
 ## Shared Validation
 
-Pull requests and pushes call the shared validation workflow from `github-pipeline-templates v0.8.10`. It checks formatting, initialises with the backend disabled, and validates every module without cloud credentials. It never runs `terraform plan` or `terraform apply`.
+Pull requests and pushes call the retained shared validation workflow from `github-pipeline-templates v0.8.10`; it also supports manual dispatch. It checks formatting, initialises with the backend disabled, and validates every module without cloud credentials. It never runs `terraform plan` or `terraform apply`.
 
-Jenkins reads `.jenkins/pipelines/validate.groovy` with `jenkins-pipeline-templates v1.3.0`. The validation-only job runs on the `platform` agent with ANSI console output and validates every module without OCI credentials.
+Jenkins reads `.jenkins/pipelines/validate.groovy` with `jenkins-pipeline-templates v1.4.0` and publishes the required `continuous-integration/jenkins` check. The validation-only job runs on the `platform` agent with ANSI console output and validates every module without OCI credentials.
 
 ## Local Checks
 

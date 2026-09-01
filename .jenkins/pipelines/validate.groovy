@@ -2,9 +2,10 @@
 // TERRAFORM MODULE VALIDATION
 //==============================================================================
 
-@Library('jenkins-pipeline-templates@v1.3.0') _
+@Library('jenkins-pipeline-templates@v1.4.0') _
 
 repositoryValidationPipeline(
+    githubRepository: 'bharathadigopula/terraform-oci-modules',
     terraformDirectories: [
         'bastion',
         'budget-alert',

@@ -11,7 +11,6 @@ resource "oci_vault_secret" "this" {
   secret_content {
     content      = base64encode(var.secret_content)
     content_type = "BASE64"
-    name         = "current"
     stage        = "CURRENT"
   }
 

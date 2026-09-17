@@ -32,6 +32,16 @@ variable "description" {
   }
 }
 
+variable "email" {
+  description = "Primary email address of the IAM user."
+  type        = string
+
+  validation {
+    condition     = var.email == lower(trimspace(var.email)) && can(regex("^[^@[:space:]]+@[^@[:space:]]+\\.[^@[:space:]]+$", var.email))
+    error_message = "email must be a valid lowercase email address."
+  }
+}
+
 variable "freeform_tags" {
   description = "Free-form tags applied to the IAM user."
   type        = map(string)

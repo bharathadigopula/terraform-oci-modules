@@ -72,8 +72,9 @@ variable "allowed_emails" {
 variable "routes" {
   description = "Public hostnames and private origin services routed through the tunnel."
   type = map(object({
-    hostname = string
-    service  = string
+    hostname  = string
+    service   = string
+    protected = optional(bool, true)
   }))
 
   validation {

@@ -14,6 +14,11 @@ output "tunnel_token" {
 }
 
 output "hostnames" {
-  description = "Public hostnames protected by Cloudflare Access."
+  description = "Public hostnames routed through the Cloudflare tunnel."
   value       = sort([for route in values(var.routes) : route.hostname])
+}
+
+output "protected_hostnames" {
+  description = "Public hostnames protected by Cloudflare Access."
+  value       = sort([for route in values(var.routes) : route.hostname if route.protected])
 }

@@ -94,7 +94,10 @@ resource "cloudflare_zero_trust_access_policy" "authenticated_users" {
 }
 
 resource "cloudflare_zero_trust_access_application" "this" {
-  for_each = var.routes
+  for_each = {
+    for route_name, route in var.routes : route_name => route
+    if route.protected
+  }
 
   account_id                 = var.account_id
   name                       = each.key

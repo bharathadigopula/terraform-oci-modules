@@ -93,8 +93,23 @@ resource "cloudflare_zero_trust_access_policy" "authenticated_users" {
   depends_on = [cloudflare_zero_trust_organization.this]
 }
 
+resource "cloudflare_zero_trust_access_policy" "public_routes" {
+  account_id = var.account_id
+  name       = "Public tool routes"
+  decision   = "bypass"
+
+  include = [{
+    everyone = {}
+  }]
+
+  depends_on = [cloudflare_zero_trust_organization.this]
+}
+
 resource "cloudflare_zero_trust_access_application" "this" {
-  for_each = var.routes
+  for_each = {
+    for route_name, route in var.routes : route_name => route
+    if route.protected
+  }
 
   account_id                 = var.account_id
   name                       = each.key
@@ -112,4 +127,22 @@ resource "cloudflare_zero_trust_access_application" "this" {
       precedence = 1
     }
   ]
+}
+
+resource "cloudflare_zero_trust_access_application" "public" {
+  for_each = {
+    for route_name, route in var.routes : route_name => route
+    if !route.protected
+  }
+
+  account_id                = var.account_id
+  name                      = each.key
+  type                      = "self_hosted"
+  domain                    = each.value.hostname
+  auto_redirect_to_identity = false
+
+  policies = [{
+    id         = cloudflare_zero_trust_access_policy.public_routes.id
+    precedence = 1
+  }]
 }

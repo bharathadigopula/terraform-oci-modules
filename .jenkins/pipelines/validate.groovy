@@ -2,7 +2,7 @@
 // TERRAFORM MODULE VALIDATION
 //==============================================================================
 
-@Library('jenkins-pipeline-templates@v1.4.0') _
+@Library('jenkins-pipeline-templates@v1.5.5') _
 
 repositoryValidationPipeline(
     githubRepository: 'bharathadigopula/terraform-oci-modules',
